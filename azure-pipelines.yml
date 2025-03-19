@@ -1,0 +1,29 @@
+trigger:
+- main  # Trigger when code is pushed to the 'main' branch
+
+pool:
+  vmImage: 'ubuntu-latest'  # Use Ubuntu as the environment to run the pipeline
+
+steps:
+- task: UseNode@2  # Install Node.js
+  inputs:
+    versionSpec: '16.x'  # Specify the version of Node.js you want to use
+
+- task: NodeTool@0  # Cache Node.js modules
+  inputs:
+    versionSpec: '16.x'
+
+- script: |
+    npm install  # Install dependencies
+    npm run build  # Run the build (if you have a build script)
+  displayName: 'Install and Build'
+
+- script: |
+    npm test  # Run tests
+  displayName: 'Run Tests'
+
+- task: AzureWebApp@1  # Deploy the app to Azure Web App
+  inputs:
+    azureSubscription: '<your Azure subscription>'
+    appName: '<your Azure Web App name>'
+    package: '$(System.DefaultWorkingDirectory)/**/*.zip'  # Specify the path to the artifact
