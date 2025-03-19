@@ -6,6 +6,10 @@ app.get('/', (req, res) => {
 });
 
 const port = 3000;
-app.listen(port, () => {
+
+const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
+// Export app and server for testing purposes
+module.exports = { app, server };
