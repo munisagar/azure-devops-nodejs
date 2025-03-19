@@ -1,0 +1,43 @@
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  NODE_VERSION: "16"
+
+before_script:
+  - echo "Using Node.js version $NODE_VERSION"
+  - apt-get update -y && apt-get install -y curl
+  - curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+  - apt-get install -y nodejs
+  - node -v
+  - npm -v
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+
+build:
+  stage: build
+  script:
+    - npm install
+    - npm run build
+  only:
+    - main
+
+test:
+  stage: test
+  script:
+    - npm test
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying to production..."
+    # Add deployment steps here (e.g., SSH to server, deploy to Azure, AWS, or another service)
+  only:
+    - main
